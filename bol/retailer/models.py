@@ -141,6 +141,20 @@ class Orders(ModelList):
         items_key = "orders"
 
 
+class Return(Model):
+    class Meta:
+        customerDetails = ModelField(CustomerDetails)
+        orderId = RawField()
+        # orderItems = ModelField(OrderItems)
+        # dateTimeOrderPlaced = DateTimeField()
+
+
+class Returns(ModelList):
+    class Meta:
+        item_type = Return
+        items_key = "returns"
+
+
 class ShipmentItem(Model):
     class Meta:
         orderDate = DateTimeField()

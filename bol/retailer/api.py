@@ -6,6 +6,8 @@ from .models import (
     InvoiceSpecification,
     Order,
     Orders,
+    Return,
+    Returns,
     ProcessStatus,
     ProcessStatuses,
     Shipment,
@@ -30,6 +32,24 @@ class MethodGroup(object):
                 path=("/{}".format(path) if path else ""),
             )
         return self.api.request(method, uri, params=params, **kwargs)
+
+
+class ReturnMethods(MethodGroup):
+    def __init__(self, api):
+        super(ReturnMethods, self).__init__(api, "returns")
+
+    def list(self, fulfilment_method=None, page=None):
+        params = {}
+        if fulfilment_method:
+            params["fulfilment-method"] = fulfilment_method
+        if page is not None:
+            params["page"] = page
+        resp = self.request("GET", params=params)
+        return Returns.parse(self.api, resp.text)
+
+    def get(self, return_id):
+        resp = self.request("GET", path=return_id)
+        return Return.parse(self.api, resp.text)
 
 
 class OrderMethods(MethodGroup):
@@ -153,6 +173,7 @@ class RetailerAPI(object):
         self.login_url = login_url or "https://login.bol.com"
         self.timeout = timeout
         self.orders = OrderMethods(self)
+        self.returns = ReturnMethods(self)
         self.shipments = ShipmentMethods(self)
         self.invoices = InvoiceMethods(self)
         self.process_status = ProcessStatusMethods(self)

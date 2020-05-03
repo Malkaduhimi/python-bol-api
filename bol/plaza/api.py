@@ -132,6 +132,15 @@ class OffersMethods(MethodGroup):
     def __init__(self, api, condition='NEW'):
         super(OffersMethods, self).__init__(api, 'offers')
 
+    def list(self, page=1):
+        if page is not None:
+            params = {'page': page}
+        else:
+            params = None
+
+        xml = self.request('GET', params=params)
+        return Orders.parse(self.api, xml)
+
     def get_single_offer(self, ean):
         uri = '/{group}/{version}{path}'.format(
             group=self.group,
