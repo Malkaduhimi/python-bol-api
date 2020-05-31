@@ -6,6 +6,7 @@ from .models import (
     InvoiceSpecification,
     Order,
     Orders,
+    Offer,
     Return,
     Returns,
     ProcessStatus,
@@ -50,6 +51,27 @@ class ReturnMethods(MethodGroup):
     def get(self, return_id):
         resp = self.request("GET", path=return_id)
         return Return.parse(self.api, resp.text)
+
+
+class OfferMethods(MethodGroup):
+    def __init__(self, api):
+        super(OfferMethods, self).__init__(api, "offers")
+
+    def get(self, offer_id):
+        resp = self.request("GET", path=offer_id)
+        return Offer.parse(self.api, resp.text)
+
+    def update_offer_stock(self, offer_id, stock):
+        try:
+            resp = self.request(
+                "PUT",
+                path='{}/stock'.format(offer_id),
+                json={'amount': stock, 'managedByRetailer': False}
+            )
+        except requests.exceptions.HTTPError as e:
+            return False
+
+        return not resp.json()['status'] in ['FAILURE', 'TIMEOUT']
 
 
 class OrderMethods(MethodGroup):
@@ -173,6 +195,7 @@ class RetailerAPI(object):
         self.login_url = login_url or "https://login.bol.com"
         self.timeout = timeout
         self.orders = OrderMethods(self)
+        self.offers = OfferMethods(self)
         self.returns = ReturnMethods(self)
         self.shipments = ShipmentMethods(self)
         self.invoices = InvoiceMethods(self)

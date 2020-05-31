@@ -155,6 +155,19 @@ class Returns(ModelList):
         items_key = "returns"
 
 
+class Offer(Model):
+    class Meta:
+        ean = RawField()
+        referenceCode = RawField()
+        # other fields are ignored atm
+
+
+class Offers(ModelList):
+    class Meta:
+        item_type = Offer
+        items_key = "offers"
+
+
 class ShipmentItem(Model):
     class Meta:
         orderDate = DateTimeField()
