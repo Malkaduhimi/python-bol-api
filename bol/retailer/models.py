@@ -145,6 +145,7 @@ class Return(Model):
     class Meta:
         customerDetails = ModelField(CustomerDetails)
         orderId = RawField()
+        handled = RawField()
         # orderItems = ModelField(OrderItems)
         # dateTimeOrderPlaced = DateTimeField()
 
